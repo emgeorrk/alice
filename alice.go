@@ -108,7 +108,7 @@ func webhook(conf Options, stream chan<- Kit) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 
-		ctx, cancel := context.WithTimeout(r.Context(), conf.Timeout*time.Millisecond)
+		ctx, cancel := context.WithTimeout(context.WithoutCancel(r.Context()), conf.Timeout*time.Millisecond)
 		defer cancel()
 
 		if conf.Debug {
