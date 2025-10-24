@@ -18,7 +18,7 @@ const (
 	NENumberType = "YANDEX.NUMBER"
 )
 
-//Entity структура прототипа именованной сущности в запросе.
+// Entity структура прототипа именованной сущности в запросе.
 type Entity struct {
 	Tokens struct {
 		Start int `json:"start"`
