@@ -76,7 +76,7 @@ func (updates Stream) Loop(f Handler) {
 }
 
 // ListenForWebhook регистрирует обработчик входящих пакетов.
-func ListenForWebhook(hook string, opts ...func(*Options)) Stream {
+func ListenForWebhook(hook string, mux *http.ServeMux, opts ...func(*Options)) Stream {
 	conf := Options{
 		AutoPong: true,
 		Timeout:  3000,
@@ -87,7 +87,7 @@ func ListenForWebhook(hook string, opts ...func(*Options)) Stream {
 	}
 
 	stream := make(chan Kit, 1)
-	http.HandleFunc(hook, webhook(conf, stream))
+	mux.HandleFunc(hook, webhook(conf, stream))
 
 	return stream
 }
