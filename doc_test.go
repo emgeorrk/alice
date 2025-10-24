@@ -7,7 +7,7 @@ import (
 )
 
 func Example() {
-	updates := alice.ListenForWebhook("/hook")
+	updates := alice.ListenForWebhook("/hook", http.DefaultServeMux)
 	go http.ListenAndServe(":3000", nil)
 
 	updates.Loop(func(k alice.Kit) *alice.Response {

@@ -8,7 +8,7 @@ import (
 )
 
 func ExampleListenForWebhook() {
-	updates := alice.ListenForWebhook("/hook", alice.Debug(true))
+	updates := alice.ListenForWebhook("/hook", http.DefaultServeMux, alice.Debug(true))
 	go http.ListenAndServe(":3000", nil)
 
 	updates.Loop(func(k alice.Kit) *alice.Response {
@@ -18,7 +18,7 @@ func ExampleListenForWebhook() {
 }
 
 func ExampleRequest_Entities() {
-	updates := alice.ListenForWebhook("/hook")
+	updates := alice.ListenForWebhook("/hook", http.DefaultServeMux)
 	go http.ListenAndServe(":3000", nil)
 
 	updates.Loop(func(k alice.Kit) *alice.Response {
@@ -43,7 +43,7 @@ func ExampleRequest_Entities() {
 }
 
 func ExampleRequest_Payload() {
-	updates := alice.ListenForWebhook("/hook")
+	updates := alice.ListenForWebhook("/hook", http.DefaultServeMux)
 	go http.ListenAndServe(":3000", nil)
 
 	updates.Loop(func(k alice.Kit) *alice.Response {
@@ -61,7 +61,7 @@ func ExampleRequest_Payload() {
 }
 
 func ExampleRequest_PayloadString() {
-	updates := alice.ListenForWebhook("/hook")
+	updates := alice.ListenForWebhook("/hook", http.DefaultServeMux)
 	go http.ListenAndServe(":3000", nil)
 
 	updates.Loop(func(k alice.Kit) *alice.Response {
@@ -77,7 +77,7 @@ func ExampleRequest_PayloadString() {
 }
 
 func ExampleResponse_BigImage() {
-	updates := alice.ListenForWebhook("/hook")
+	updates := alice.ListenForWebhook("/hook", http.DefaultServeMux)
 	go http.ListenAndServe(":3000", nil)
 
 	updates.Loop(func(k alice.Kit) *alice.Response {
@@ -88,7 +88,7 @@ func ExampleResponse_BigImage() {
 }
 
 func ExampleResponse_BigImage_button() {
-	updates := alice.ListenForWebhook("/hook")
+	updates := alice.ListenForWebhook("/hook", http.DefaultServeMux)
 	go http.ListenAndServe(":3000", nil)
 
 	updates.Loop(func(k alice.Kit) *alice.Response {
@@ -100,7 +100,7 @@ func ExampleResponse_BigImage_button() {
 }
 
 func ExampleResponse_List() {
-	updates := alice.ListenForWebhook("/hook")
+	updates := alice.ListenForWebhook("/hook", http.DefaultServeMux)
 	go http.ListenAndServe(":3000", nil)
 
 	updates.Loop(func(k alice.Kit) *alice.Response {
