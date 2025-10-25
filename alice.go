@@ -31,8 +31,9 @@ func (k Kit) Init() (*Request, *Response) {
 // Options структура с настройками.
 type Options struct {
 	AutoPong bool
-	Timeout  time.Duration
 	Debug    bool
+	Timeout  time.Duration
+	mux      *http.ServeMux
 }
 
 // AutoPong автоматический ответ на технические сообщения ping, проверяющие работоспособность навыка. По умолчанию включено.
@@ -59,6 +60,13 @@ func Debug(b bool) func(*Options) {
 	}
 }
 
+// WithMux позволяет указать собственный HTTP-мультиплексор для регистрации обработчика вебхука.
+func WithMux(mux *http.ServeMux) func(*Options) {
+	return func(opts *Options) {
+		opts.mux = mux
+	}
+}
+
 // Stream канал, передающий данные в основной цикл.
 type Stream <-chan Kit
 
@@ -81,13 +89,14 @@ func ListenForWebhook(hook string, opts ...func(*Options)) Stream {
 		AutoPong: true,
 		Timeout:  3000,
 		Debug:    false,
+		mux:      http.DefaultServeMux,
 	}
 	for _, opt := range opts {
 		opt(&conf)
 	}
 
 	stream := make(chan Kit, 1)
-	http.HandleFunc(hook, webhook(conf, stream))
+	conf.mux.HandleFunc(hook, webhook(conf, stream))
 
 	return stream
 }
