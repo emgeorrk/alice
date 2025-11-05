@@ -23,10 +23,11 @@ type Request struct {
 		Interfaces struct {
 			AccountLinking *struct{} `json:"account_linking"`
 			Screen         *struct{} `json:"screen"`
+			AudioPlayer    *struct{} `json:"audio_player"`
 		} `json:"interfaces"`
 	} `json:"meta"`
 
-	LinkingComplete *struct{} `json:"account_linking_complete_event,omitenpty"`
+	LinkingComplete *struct{} `json:"account_linking_complete_event,omitempty"`
 
 	Request struct {
 		Command           string `json:"command"`
@@ -37,9 +38,11 @@ type Request struct {
 		} `json:"markup,omitempty"`
 		Payload interface{} `json:"payload,omitempty"`
 		NLU     struct {
-			Tokens   []string `json:"tokens"`
-			Entities []Entity `json:"entities,omitempty"`
+			Tokens   []string          `json:"tokens"`
+			Entities []Entity          `json:"entities,omitempty"`
+			Intents  map[string]Intent `json:"intents,omitempty"`
 		} `json:"nlu"`
+		Tokens *struct{} `json:"tokens,omitempty"`
 	} `json:"request"`
 
 	Session struct {
@@ -47,7 +50,13 @@ type Request struct {
 		MessageID int    `json:"message_id"`
 		SessionID string `json:"session_id"`
 		SkillID   string `json:"skill_id"`
-		UserID    string `json:"user_id"`
+		UserID    string `json:"user_id"` // Deprecated: Свойство не поддерживается — вместо него следует использовать новое, полностью аналогичное свойство session.application.application_id
+		User      struct {
+			UserID string `json:"user_id"`
+		} `json:"user"`
+		Application struct {
+			ApplicationID string `json:"application_id"`
+		} `json:"application"`
 	} `json:"session"`
 
 	State struct {
@@ -62,7 +71,9 @@ func (req *Request) clean() *Request {
 	req.Meta.Interfaces = struct {
 		AccountLinking *struct{} `json:"account_linking"`
 		Screen         *struct{} `json:"screen"`
+		AudioPlayer    *struct{} `json:"audio_player"`
 	}{
+		nil,
 		nil,
 		nil,
 	}
@@ -76,11 +87,13 @@ func (req *Request) clean() *Request {
 		nil,
 	}
 	req.Request.NLU = struct {
-		Tokens   []string `json:"tokens"`
-		Entities []Entity `json:"entities,omitempty"`
+		Tokens   []string          `json:"tokens"`
+		Entities []Entity          `json:"entities,omitempty"`
+		Intents  map[string]Intent `json:"intents,omitempty"`
 	}{
 		[]string{},
 		[]Entity{},
+		map[string]Intent{},
 	}
 	req.Bearer = ""
 	return req
@@ -187,7 +200,12 @@ func (req *Request) SkillID() string {
 
 // UserID идентификатор пользователя.
 func (req *Request) UserID() string {
-	return req.Session.UserID
+	return req.Session.User.UserID
+}
+
+// ApplicationID Идентификатор экземпляра приложения.
+func (req *Request) ApplicationID() string {
+	return req.Session.Application.ApplicationID
 }
 
 // Ver версия протокола.
@@ -211,7 +229,6 @@ func (req *Request) StateSessionAsJson() (string, error) {
 
 	return string(data), err
 }
-
 
 // AuthToken токен, полученный при связке аккаунтов.
 func (req *Request) AuthToken() string {

@@ -496,11 +496,11 @@ func TestRequest_StateSession(t *testing.T) {
 			request: getReq(0),
 			want:    nil,
 		},
-		"when state is empty 1":{
+		"when state is empty 1": {
 			request: getReq(1),
 			want:    nil,
 		},
-		"when state is empty 2":{
+		"when state is empty 2": {
 			request: getReq(2),
 			want:    nil,
 		},
@@ -508,7 +508,7 @@ func TestRequest_StateSession(t *testing.T) {
 	for name, tt := range tests {
 		t.Run(name, func(t *testing.T) {
 			req := tt.request
-			got := req.StateSession("");
+			got := req.StateSession("")
 			if !assert.Equal(t, tt.want, got) {
 				t.Errorf("Request.StateSession() = %v, want %v", got, tt.want)
 			}
@@ -522,8 +522,8 @@ func TestRequest_StateSession(t *testing.T) {
 
 		assert.Equal(t, 42.0, req.StateSession("int_value"))
 		assert.Equal(t, "exampleString", req.StateSession("string_value"))
-		assert.Equal(t, []interface{}{1.0,2.0,3.0,4.0}, req.StateSession("array_value"))
-		assert.Equal(t, map[string]interface{}{"one":"one"}, req.StateSession("struct_value"))
+		assert.Equal(t, []interface{}{1.0, 2.0, 3.0, 4.0}, req.StateSession("array_value"))
+		assert.Equal(t, map[string]interface{}{"one": "one"}, req.StateSession("struct_value"))
 		stateJson, err := req.StateSessionAsJson()
 		if assert.NoError(t, err) {
 			assert.Equal(t, `{"array_value":[1,2,3,4],"int_value":42,"string_value":"exampleString","struct_value":{"one":"one"}}`, stateJson)

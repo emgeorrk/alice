@@ -1,6 +1,6 @@
 module github.com/azzzak/alice
 
-go 1.25
+go 1.24.9
 
 require github.com/stretchr/testify v1.11.1
 

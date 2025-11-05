@@ -48,7 +48,7 @@ func (resp *Response) clean() *Response {
 func (resp *Response) prepareResponse(req *Request) *Response {
 	resp.Session.MessageID = req.Session.MessageID
 	resp.Session.SessionID = req.Session.SessionID
-	resp.Session.UserID = req.Session.UserID
+	resp.Session.UserID = req.Session.User.UserID
 	resp.Version = "1.0"
 	return resp
 }
