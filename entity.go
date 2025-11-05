@@ -16,6 +16,9 @@ const (
 
 	// NENumberType именованная сущность с числом.
 	NENumberType = "YANDEX.NUMBER"
+
+	// NEStringType именованная сущность со строкой.
+	NEStringType = "YANDEX.STRING"
 )
 
 // Entity структура прототипа именованной сущности в запросе.
@@ -64,10 +67,14 @@ type NEDateTime struct {
 // NENumber структура типа NENumberType.
 type NENumber float32
 
+// NEString структура типа NEStringType.
+type NEString string
+
 func (NEName) netype()     {}
 func (NELocation) netype() {}
 func (NEDateTime) netype() {}
 func (NENumber) netype()   {}
+func (NEString) netype()   {}
 
 type netype interface {
 	netype()
@@ -137,9 +144,21 @@ func (e Entities) Numbers() []NumberWrapper {
 	return a
 }
 
+// Strings возвращает готовый к использованию массив именованных сущностей со строками.
+func (e Entities) Strings() []NEString {
+	var a []NEString
+	for _, v := range e[NEStringType] {
+		s := v.Value.(*NEString)
+		d := *s
+		a = append(a, d)
+	}
+	return a
+}
+
 type newrapper struct {
 	Start, End int
 	Value      netype
+	Slot       string
 }
 
 // Entities контейнер для передачи необработанных именованных сущностей.
@@ -172,6 +191,8 @@ func holder(t string) netype {
 		return new(NEDateTime)
 	case NENumberType:
 		return new(NENumber)
+	case NEStringType:
+		return new(NEString)
 	}
 	return nil
 }
