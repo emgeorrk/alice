@@ -77,8 +77,12 @@ type Handler func(k Kit) *Response
 func (updates Stream) Loop(f Handler) {
 	for kit := range updates {
 		go func(k Kit) {
-			k.c <- f(k)
-			close(k.c)
+			defer close(k.c)
+			result := f(k)
+			select {
+			case k.c <- result:
+			case <-k.Ctx.Done():
+			}
 		}(kit)
 	}
 }
@@ -156,7 +160,7 @@ func webhook(conf Options, stream chan<- Kit) http.HandlerFunc {
 
 		req.Bearer = r.Header.Get("Authorization")
 
-		back := make(chan *Response)
+		back := make(chan *Response, 1)
 		stream <- Kit{
 			Req:  req,
 			Resp: resp,
